@@ -1,0 +1,51 @@
+.floating-box{
+  display: inline-block;
+  width: 480px;
+  height: 720px;
+}
+
+.flex-container {
+  display: -webkit-flex;
+  display: flex;
+  width: 480px;
+  height: 720px;
+  background: -moz-linear-gradient(bottom right, rgba(5,5,5,1), rgba(155,155,155,1)); /* Standard syntax */
+  flex-flow: wrap;
+}
+
+.flex-display{
+  background: -moz-linear-gradient(top right, rgba(166,0,166,1), rgba(255,122,0,1)); /* Standard syntax */
+  width: 480px;
+  height: 715px;
+  padding-top: 2px;
+  padding-left: 2px;
+  padding-bottom: 3px;
+  flex-flow: wrap;
+
+}
+
+.flex-item {
+  background: -moz-radial-gradient( #50DCC2 0%, #47D9B5 25%, #39D7A7 50%,  #24D297 75%, #0ECE95 100%); /* Standard syntax */
+  width: 220px;
+  height: 220px;
+  margin: 5px;
+  font-size: 18px;
+  font: Helvetica;
+  padding: 5px;
+  flex-wrap: nowrap;
+  text-align: center;
+}
+
+.flex-list {
+  background: -moz-radial-gradient( #50DCC2 0%, #47D9B5 25%, #39D7A7 50%,  #24D297 75%, #0ECE95 100%); /* Standard syntax */
+  width: 460px;
+  height: 25px;
+  margin: 4px;
+  margin-left: 5px;
+  font-size: 16px;
+  font: Helvetica;
+  padding-top: 5px;
+  padding-left: 5px;
+  flex-wrap: nowrap;
+  text-align: left;
+}

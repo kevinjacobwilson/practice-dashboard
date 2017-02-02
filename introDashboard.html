@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.6.4/firebase.js"></script>
+<link rel="stylesheet" type="text/css" href="myStyle.css">
+
+</head>
+
+<body>
+
+  <div class="floating-box">
+    <div class="flex-display" id="display"></div>
+  </div>
+
+  <div class="floating-box">
+    <div class="flex-container">
+      <div class="flex-item" id="chainLength"></div>
+
+      <div class="flex-item" id="inviteStats"></div>
+
+      <div class="flex-item" id="invPurpose"></div>
+
+      <div class="flex-item" id="h4"></div>
+
+      <div class="flex-item" id="flowSpeeds"></div>
+
+      <div class="flex-item" id="buttStats"></div>
+    </div>
+  </div>
+
+  <div class="floating-box">
+    <div id="container">
+      <canvas id="myCanvas" height="720" width="480"></canvas>
+    </div>
+  </div>
+
+
+  </div>
+
+
+  <script src="logo3.js"></script>
+
+  <script>
+  $(document).ready(function(){
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyAwRj_BiJNEvKJC7GQSm9rv9dF_mjIhuzM",
+      authDomain: "coincast.firebaseapp.com",
+      databaseURL: "https://coincast.firebaseio.com",
+      storageBucket: "firebase-coincast.appspot.com",
+      messagingSenderId: "1045627802122"
+    };
+    firebase.initializeApp(config);
+    //make references
+  });
+  function JSONtolist(json){//converts json object with depth = 3 to html list string
+    var container = "<ul>";
+    for( key in json ){
+      container += "<li>" + key +"</li>";
+      container += "<ul>";
+      for( att in json[key] ){
+        container += "<li>" + att + " = " + json[key][att] + "</li>";
+      }
+      container += "</ul>"
+    }
+    container += "</ul>";
+    return container;
+  }
+</script>
+<script src="userMetrics.js"></script>
+<script src="invites.js"></script>
+
+</body>
+
+</html>
