@@ -42,9 +42,30 @@ $(document).ready(function(){
         fastestFlow = cSnapshot.key;
       }
 
-    });
+    }); //end of cSnapshot
+
+    var flowFlexList = '<div class="flex-list" id="purposeList">Fastest Flows (Average)</div>';
+    var count = 0;
+    var array = [];
+    for(key in durs){
+      array.push([key,durs[key]["Average Duration"]]);
+    }
+    array.sort(function(a,b){return a[1]-b[1]}); //sort by most invites sent
+
+    for(var i = 0; i < array.length; i++){
+      flowFlexList += '<div class="flex-list" id="' + array[i][0] + '">' + (++count) + '. ' + array[i][0] + ': ' + Math.round(array[i][1]*10)/10 + ' seconds</div>';
+      if(count >= 20){
+        break;
+      }
+    }
+    while(count < 20){
+      count++;
+      flowFlexList += '<div class="flex-list" id="empty"></div>';
+    }
+    flowFlexList += '<div class="flex-list" id="tail" style="background:rgba(5,5,5,0);font-size:0px;margin-top:0px;padding-top:0px"><font color = orange>.</div>';
+
     document.getElementById("flowSpeeds").innerHTML = "<br/>Fastest Flow:<br/>" + fastestFlow + "<br/>" + Math.round(minAvg/100)/10 + " s<br/><br/>Slowest Flow:<br/>" + slowestFlow + "<br/>" + Math.round(maxAvg/100)/10 + " s";
-    document.getElementById("flowSpeeds").onclick = function(){document.getElementById("display").innerHTML = JSONtolist(durs)};
+    document.getElementById("flowSpeeds").onclick = function(){document.getElementById("display").innerHTML = flowFlexList};
   });
 
   var buttRef = umRef.child("buttonPress");

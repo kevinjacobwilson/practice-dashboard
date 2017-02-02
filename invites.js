@@ -61,6 +61,7 @@ $(document).ready(function(){
       if(!chains[key].hasOwnProperty("max")){//if no data,
         chains[key] = chainData(reversed,key,chains);// add data
       }
+
       if(!snapshot.child(key).exists()){//not in snap = OG inviter
         if(chains[key]["max"] > ovMax){
           ovMax = chains[key]["max"];
@@ -74,10 +75,57 @@ $(document).ready(function(){
         chaintot += chains[key]["cns"];
       }
     }
+
+    //make FlexList for side panel
+    var invFlexList = '<div class="flex-list" id="purposeList">Top Inviters</div>';
+    var count = 0;
+    var array = [];
+    for(key in reversed){
+      var numInv = 0;
+      for(child in reversed[key]){
+        numInv++;
+      }
+      array.push([key,numInv]);
+    }
+    array.sort(function(a,b){return b[1]-a[1]}); //sort by most invites sent
+
+    for(var i = 0; i < array.length; i++){
+      invFlexList += '<div class="flex-list" id="' + array[i][0] + '">' + (++count) + '. ' + array[i][0] + ': ' + array[i][1] + '</div>';
+      if(count > 20){
+        break;
+      }
+    }
+    while(count < 20){
+      count++;
+      invFlexList += '<div class="flex-list" id="empty"></div>';
+    }
+    invFlexList += '<div class="flex-list" id="tail" style="background:rgba(5,5,5,0);font-size:0px;margin-top:0px;padding-top:0px"><font color = orange>.</div>';
+
+    var chainFlexList = '<div class="flex-list" id="purposeList">Largest Invite Chains</div>';
+    var count = 0;
+    var array = [];
+    for(key in chains){
+      array.push([key,chains[key]["max"]]);
+    }
+    array.sort(function(a,b){return b[1]-a[1]}); //sort by most invites sent
+
+    for(var i = 0; i < array.length; i++){
+      chainFlexList += '<div class="flex-list" id="' + array[i][0] + '">' + (++count) + '. ' + array[i][0] + ': ' + array[i][1] + '&nbsp&nbsp&nbsp Avg: ' + Math.round(chains[array[i][0]]["avg"]*100)/100 + '</div>';
+      if(count >= 20){
+        break;
+      }
+    }
+    while(count < 20){
+      count++;
+      chainFlexList += '<div class="flex-list" id="empty"></div>';
+    }
+    chainFlexList += '<div class="flex-list" id="tail" style="background:rgba(5,5,5,0);font-size:0px;margin-top:0px;padding-top:0px"><font color = orange>.</div>';
+
+
     document.getElementById("chainLength").innerHTML = "<br/><br/>Max chain length: " + ovMax + "<br/>By User<br/><font size = 3>" + (ovMaxID.length > 20 ? ovMaxID.substr(0,19)+"...":ovMaxID) + "</font><br/><br/>Average chain length: " + (chaintot = 0 ? 0 : Math.round(ovAvg/chaintot*100)/100);
     document.getElementById("inviteStats").innerHTML = "<br/><br/>Most invites sent: " + maxInvites + "<br/>By User<br/><font size = 3>" + (maxInviter.length > 20 ? maxInviter.substr(0,19)+"...":maxInviter) + "</font><br/><br/>Most chains: " + ovCns + "<br/>By User<br/><font size = 3>" + (ovCnsID.length > 20 ? ovCnsID.substr(0,19)+"...":ovCnsID);
-    document.getElementById("chainLength").onclick = function(){document.getElementById("display").innerHTML = JSONtolist(reversed)};
-    document.getElementById("inviteStats").onclick = function(){document.getElementById("display").innerHTML = JSONtolist(reversed)};
+    document.getElementById("chainLength").onclick = function(){document.getElementById("display").innerHTML = chainFlexList};
+    document.getElementById("inviteStats").onclick = function(){document.getElementById("display").innerHTML = invFlexList};
 
 
 
@@ -96,17 +144,25 @@ $(document).ready(function(){
         }
         purpList[purpose] = (purpList.hasOwnProperty(purpose) ? purpList[purpose] + 1 : 1);
       });
-
-      var purpFlexList = '<div class="flex-list" id="purposeList">Top Purposes for Payment Invites</div>';
-      var count = 0;
+      //do stuff with purpList after the snap is generated
       for(key in purpList){
-        purpFlexList += '<div class="flex-list" id="' + key + '">' + (++count) + '. ' + key + ': ' + purpList[key] + '</div>';
-
         if( purpList[key] > maxPurpNum ){
           maxPurpNum = purpList[key];
           maxPurpose = key;
         }
-        if(count > 20){
+      }
+
+      var purpFlexList = '<div class="flex-list" id="purposeList">Top Purposes for Payment Invites</div>';
+      var count = 0;
+      var array = [];
+      for(key in purpList){
+        array.push([key,purpList[key]]);
+      }
+      array.sort(function(a,b){return b[1]-a[1]}); //sort by most invites sent
+
+      for(var i = 0; i < array.length; i++){
+        purpFlexList += '<div class="flex-list" id="' + array[i][0] + '">' + (++count) + '. ' + array[i][0] + ': ' + array[i][1] + '</div>';
+        if(count >= 20){
           break;
         }
       }
