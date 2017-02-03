@@ -139,29 +139,64 @@ $(document).ready(function(){
         var inviter = piChild.val().inviter;
         var invitee = (piChild.val().invitee == "sender" ? piChild.val().sender_name : piChild.val().recip_name);
         var purpose = piChild.val().purpose;
-        if(!payInviters.hasOwnProperty(inviter)){
-          payInviters[inviter] = {};
+        var cost = parseInt(piChild.val().amount);
+        //store payments by inviter/purpose to find common groups of invitees
+        if(!payInviters.hasOwnProperty(purpose)){
+          payInviters[purpose] = {};
         }
-        purpList[purpose] = (purpList.hasOwnProperty(purpose) ? purpList[purpose] + 1 : 1);
+        if(!payInviters[purpose].hasOwnProperty(inviter)){
+          payInviters[purpose][inviter] = {};
+        }
+        if(!payInviters[purpose][inviter].hasOwnProperty(invitee)){
+          payInviters[purpose][inviter][invitee] = 1;
+        }
+        else{payInviters[purpose][inviter][invitee]++}
+
+        purpList[purpose] = (purpList.hasOwnProperty(purpose) ? {"cost":purpList[purpose]["cost"]+cost,"count":purpList[purpose]["count"] + 1} :{"cost":cost,"count":1});
       });
       //do stuff with purpList after the snap is generated
+
+      //find most common purpose
       for(key in purpList){
-        if( purpList[key] > maxPurpNum ){
-          maxPurpNum = purpList[key];
+        if( purpList[key]["count"] > maxPurpNum ){
+          maxPurpNum = purpList[key]["count"];
           maxPurpose = key;
         }
       }
+      //find most expensive purpose (avg payment)
+      var expPurpNum = 0;
+      var expPurpose = "";
+      for(key in purpList){
+        if( purpList[key]["cost"]/purpList[key]["count"] > expPurpNum ){
+          expPurpNum = purpList[key]["cost"]/purpList[key]["count"];
+          expPurpose = key;
+        }
+      }
+
+      //now do stuff with payInviters
+      for(purp in payInviters){
+        var invitees = 0;
+        var inviters = 0;
+        for(inv in payInviters[purp]){
+          inviters++;
+          for(invitee in payInviters[purp][inv]){
+            invitees++;
+          }
+        }
+        purpList[purp]["avg"] = (inviters == 0 ? 0 : invitees/inviters);
+      }
+
 
       var purpFlexList = '<div class="flex-list" id="purposeList">Top Purposes for Payment Invites</div>';
       var count = 0;
       var array = [];
       for(key in purpList){
-        array.push([key,purpList[key]]);
+        array.push([key,purpList[key]["count"],purpList[key]["cost"],purpList[key]["avg"]]);
       }
       array.sort(function(a,b){return b[1]-a[1]}); //sort by most invites sent
 
       for(var i = 0; i < array.length; i++){
-        purpFlexList += '<div class="flex-list" id="' + array[i][0] + '">' + (++count) + '. ' + array[i][0] + ': ' + array[i][1] + '</div>';
+        purpFlexList += '<div class="flex-list" id="' + array[i][0] + '">' + (++count) + '. ' + array[i][0] + ': ' + array[i][1] + ' &nbsp&nbsp&nbsp Avg Cost: ' + array[i][2]/array[i][1] + ' &nbsp&nbsp&nbsp Avg Inv: '+ array[i][3] + '</div>';
         if(count >= 20){
           break;
         }
@@ -173,7 +208,7 @@ $(document).ready(function(){
       purpFlexList += '<div class="flex-list" id="tail" style="background:rgba(5,5,5,0);font-size:0px;margin-top:0px;padding-top:0px"><font color = orange>.</div>';
 
 
-      document.getElementById("invPurpose").innerHTML = "<br/><br/>Top PayInvite Purpose:<br/>" + maxPurpose + "<br/><br/>Total: <font size = 3>" + maxPurpNum;
+      document.getElementById("invPurpose").innerHTML = "<br/>Most Common Payment Inv:<br/>" + maxPurpose + "<br/>Total: " + maxPurpNum + "<br/><br/>Most Expensive Payment Inv:<br/>" + expPurpose + "<br/>Avg Cost: " + expPurpNum;
       document.getElementById("invPurpose").onclick = function(){document.getElementById("display").innerHTML = purpFlexList};
     });
   });//end of snapshot
